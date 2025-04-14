@@ -1,0 +1,21 @@
+services:
+  crm:
+    build: .
+    container_name: crm
+    command: bash -c "
+      python manage.py migrate
+      && python manage.py collectstatic --no-input
+      && gunicorn wsgi:application --bind 0.0.0.0:8000
+      "
+    volumes:
+      - .:/usr/src/
+    ports:
+      - "8000:8000"
+    env_file: .env
+    networks:
+      - crm-network
+
+networks:
+  crm-network:
+    name: crm-network
+    driver: bridge
